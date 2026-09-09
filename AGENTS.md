@@ -15,7 +15,7 @@
 ## 专项规则
 
 * 正式需求、新增 Feature、需求迭代或业务规则变化按 `feature-development` 的 Feature Context Contract 及 Design / Implement / Review 阶段规则执行；普通 Bug、纯诊断、一次性只读 Review、解释问答和不改变业务行为的机械修改不因此自动进入 Feature 工作流。
-* Review、SQL、生产日志和中文业务注释的专项规则由 `hly-codex-guards` 对应 Skill 定义，本文件不重复维护其细节。
+* Review 使用 `code-review-guard`；SQL 使用 `sql-writing-style`；生产日志使用 `logging-style-guard`；中文业务注释使用 `hly-code-comment-style`。专项细节由对应 Skill 定义，本文件不重复维护。
 * `single-risk-fix` 和 `subagent-delegation-assessment` 仅在用户明确调用时使用。
 
 ## 修改与写入边界
