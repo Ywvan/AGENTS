@@ -14,10 +14,11 @@
 
 ## 专项规则
 
-* 正式需求、新增 Feature、需求迭代或业务规则变化按 `feature-development` 的 Feature Context Contract 及 Design / Implement / Review 阶段规则执行；普通 Bug、纯诊断、一次性只读 Review、解释问答和不改变业务行为的机械修改不自动进入 Feature 工作流。
-* Skill 使用“Primary + Conditional Specialist”：Primary Skill 负责当前任务生命周期；只有当前变更实际涉及对应领域时才叠加 Specialist Skill。不要因为任务复杂全量加载所有 Skill，也不要让 Specialist 接管整体任务。
-* 不属于正式 Feature 的一次性代码 Review 以 `code-review-guard` 为 Primary；正式 Feature 的最终 Review 以 `feature-review` 为 Primary，并组合 `code-review-guard`。SQL、生产日志、中文业务注释仅在实际涉及时分别组合 `sql-writing-style`、`logging-style-guard`、`hly-code-comment-style`。
-* `single-risk-fix` 和 `subagent-delegation-assessment` 仅在用户明确调用时使用。
+* 插件和 Skill 的可用性以当前会话实际启用并暴露的能力为准。已禁用、未启用或未出现在当前可用 Skill 列表中的插件及其 Skills 不得使用，也不得通过搜索或读取本地插件缓存、安装目录、历史文件等方式重新加载；本文件中引用该插件或 Skill 的规则在其不可用期间不执行。
+* 当 `feature-development` 当前启用且相关 Skills 在当前会话可用时，正式需求、新增 Feature、需求迭代或业务规则变化按其 Feature Context Contract 及 Design / Implement / Review 阶段规则执行；不可用时按本 AGENTS 的通用规则和当前实际可用的 Skills 完成需求分析、实现与 Review，不得从本地缓存恢复该工作流。
+* Skill 使用“Primary + Conditional Specialist”：Primary Skill 负责当前任务生命周期；只有当前变更实际涉及对应领域且对应 Skill 当前可用时才叠加 Specialist Skill。不要因为任务复杂全量加载所有 Skill，也不要让 Specialist 接管整体任务。
+* 不属于正式 Feature 的一次性代码 Review，仅在 `code-review-guard` 当前可用时以其为 Primary；正式 Feature 的最终 Review，仅在 `feature-review` 当前可用时以其为 Primary，并在 `code-review-guard` 同时可用时组合使用。SQL、生产日志、中文业务注释仅在实际涉及且对应 Skill 当前可用时，分别组合 `sql-writing-style`、`logging-style-guard`、`hly-code-comment-style`。
+* `single-risk-fix` 和 `subagent-delegation-assessment` 仅在用户明确调用且对应 Skill 当前可用时使用。
 
 ## 修改与写入边界
 
