@@ -30,7 +30,7 @@
 ## Code Navigation 与 Shell
 
 * 当前 Windows Shell 使用 PowerShell 语法；不得混用仅适用于 Bash 的语法。`rg` exit code 1 表示无匹配，不视为执行失败。
-* 对应工具当前可用时，Java symbol、reference、caller / callee、方法体和当前实现定位优先使用 Serena；跨模块依赖、执行路径、调用链候选和改动影响范围优先使用 GitNexus。根据当前问题选择信息增益更高的工具，不因两者同时可用而机械重复查询。
+* 对应工具当前可用时，Java symbol、reference、caller / callee、方法体和当前实现定位优先使用 Serena；已有文件或 symbol 定位信息时，可作为 Serena 的初始定位线索以缩小目标解析范围，不得仅凭定位认定当前实现；定位来自非当前源码时，先确认其与当前 repo / worktree 对齐。Serena 未命中、返回多个候选或与当前 diff / 源码冲突时，重新解析目标，必要时再扩大查询范围。跨模块依赖、执行路径、调用链候选和改动影响范围优先使用 GitNexus。根据当前问题选择信息增益更高的工具，不因两者同时可用而机械重复查询。
 * `rg` 主要用于字符串、配置、SQL / XML / YAML、动态引用、Serena 无法覆盖的场景，以及“是否还有其他入口 / 引用”的完整性验证。涉及完整性判断时，先确认匹配文件集合或范围，再读取具体内容；不得因结果被截断而宣称检查完整。
 * 首次在当前任务使用 Serena / GitNexus，或当前工作目录、repo、worktree 发生变化时确认工具绑定；上述条件未变化时复用已确认状态，不重复激活或探测。Serena 使用 linked worktree 时以当前 worktree 路径为项目边界；GitNexus 的 repo / worktree 与当前修改目录一致；MCP 未从目标 worktree 启动时，`detect_changes` 显式传入该 worktree 的绝对路径。
 * GitNexus 结果属于索引图谱证据，不自动等同于当前 worktree 源码事实。索引过期、无法确认与当前 HEAD / worktree 对齐、结果为 partial / truncated、或与 Serena / 源码冲突时，不得据此形成确定性结论；涉及最终修改或关键业务结论的具体实现事实回到 Serena 或实际源码核验。
