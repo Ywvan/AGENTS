@@ -29,11 +29,10 @@
 ## Code Navigation 与 Shell
 
 * 当前 Windows Shell 使用 PowerShell 语法；不得混用仅适用于 Bash 的语法。`rg` exit code 1 表示无匹配，不视为执行失败。
-* 对应工具当前可用时，Java symbol、reference、caller / callee、方法体和当前实现定位优先使用 Serena；已有文件或 symbol 定位信息时，可作为 Serena 的初始定位线索以缩小目标解析范围，不得仅凭定位认定当前实现；定位来自非当前源码时，先确认其与当前 repo / worktree 对齐。Serena 未命中、返回多个候选或与当前 diff / 源码冲突时，重新解析目标，必要时再扩大查询范围。跨模块依赖、执行路径、调用链候选和改动影响范围优先使用 GitNexus。根据当前问题选择信息增益更高的工具，不因两者同时可用而机械重复查询。
-* `rg` 主要用于字符串、配置、SQL / XML / YAML、动态引用、Serena 无法覆盖的场景，以及“是否还有其他入口 / 引用”的完整性验证。涉及完整性判断时，先确认匹配文件集合或范围，再读取具体内容；不得因结果被截断而宣称检查完整。
-* 首次在当前任务使用 Serena / GitNexus，或当前工作目录、repo、worktree 发生变化时确认工具绑定；上述条件未变化时复用已确认状态，不重复激活或探测。Serena 使用 linked worktree 时以当前 worktree 路径为项目边界；GitNexus 的 repo / worktree 与当前修改目录一致；MCP 未从目标 worktree 启动时，`detect_changes` 显式传入该 worktree 的绝对路径。
-* GitNexus 结果属于索引图谱证据，不自动等同于当前 worktree 源码事实。索引过期、无法确认与当前 HEAD / worktree 对齐、结果为 partial / truncated、或与 Serena / 源码冲突时，不得据此形成确定性结论；涉及最终修改或关键业务结论的具体实现事实回到 Serena 或实际源码核验。
-* GitNexus 的零影响、零变更或未命中，仅在 repo / worktree 绑定已确认且结果未报告 stale / partial / truncated 等降级状态时才可作为辅助证据；即使满足这些条件，也不得单独据此形成无影响 / 无风险结论或结束关键路径调查；否则视为未确认。
+* 源码实现、Java Symbol、reference / caller / callee、代码调用关系、执行路径和影响范围等代码语义 / 结构搜索，优先使用 Serena / GitNexus；由模型根据当前问题自主选择或组合，不规定固定调用顺序，也不因工具可用而机械调用。
+* `rg` / Shell 主要用于字符串、配置、SQL / XML / YAML、动态引用、非 Java 或非结构化内容，以及 Serena / GitNexus 无法有效覆盖的场景；不以连续文本搜索替代本可由结构化代码工具获得的关键代码关系证据。涉及完整性判断时，先确认查询范围和结果是否完整，不得因结果被截断而宣称检查完整。
+* Serena / GitNexus 的目标 repo / worktree 必须与当前任务一致；当前工作目录、repo、worktree 未变化时复用已确认的绑定，不重复确认。
+* GitNexus 属于索引图谱证据，不自动等同于当前源码事实；目标未对齐、索引状态异常、结果不完整或与当前源码冲突时，不得据此形成确定性结论。具体实现事实以当前源码为准，GitNexus 的零影响、零变更或未命中也不得单独形成无影响 / 无风险结论。
 * Shell 查询先缩小路径、文件、symbol 或行区间，再读取具体内容；存在更小读取范围时，不无目标输出完整大文件、整仓库 diff 或大段日志。
 * 工具在同一服务、连接实例、项目和运行环境中已经成功调用后直接复用；未出现 tool/schema/权限/连接错误且上述环境未变化时，不重复执行全量工具发现或重新获取完整工具定义。
 * 工具调用、查询或命令失败后，不使用完全相同的输入立即重试。参数、schema、路径、权限或其他确定性错误再次出现时，必须改变参数、查询范围、执行方式或证据来源；timeout、rate limit、busy 等瞬态错误优先使用工具返回的 retry_after / 重试条件，未提供时使用下一条 Pending 轮询间隔。没有可执行的替代路径时记录阻塞，不循环重试。
